@@ -1,0 +1,33 @@
+function cmus (){
+	cd $HOME/Music
+	/usr/bin/cmus
+	cd $OLDPWD
+} #cmus önceden çalıştırılabilir dosya olduğu için çakışıyor snrm hata verdi, bende function yazdım başına ve çözüldü
+
+exit (){
+	pkill sshd
+	exit
+}
+
+sshd (){
+	sudo sshd
+	echo ssh $(whoami)@$(ipa)
+}
+
+sshmode (){
+	mode=$1
+	if [ -z "$mode" ] || grep -q "\-h" <<< "$mode" ; then echo "sshmode - debug ssh opened or closed for .*shrc theme \n\tusage: $0 [1:0]\n\t\t1: emulate ssh\n\t\t0: stop emulate ssh (warning: stops ssh theme in ssh!)" && false ; else
+	[ $mode != 1 ] && [ $mode != 0 ] && echo "$mode is not valid! (1: on, 0: off)" && false
+	[ $mode == 1 ] && export SSH_CLIENT='yes' 
+	[ $mode == 0 ] && export SSH_CLIENT= 
+	source ~/.${SHELL}rc ; fi
+}
+
+colormode (){
+	mode=$1
+	if [ -z "$mode" ] || grep -q "\-h" <<< "$mode" ; then echo "colormode - changes color mode for .*shrc theme \n\tusage: $0 [1:0]\n\t\t1: color on \n\t\t0: color off" && false ; else
+	[ $mode != 1 ] && [ $mode != 0 ] && echo "$mode is not valid! (1: on, 0: off)\nchanging color on for error." && false
+	[ $mode == 1 ] && export color_prompt=yes 
+	[ $mode == 0 ] && export color_prompt=x
+	source ~/.${SHELL}rc ; fi
+}

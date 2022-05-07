@@ -1,0 +1,44 @@
+### kısaltmalar
+alias cat="pridecat" #ohno- yanlış anlamayın
+alias cls="clear"
+alias vim="nvim"
+alias codi="codium"
+alias code="codium"
+
+### ayar kısayolları
+alias vipico='nvim ~/.config/picom.conf'
+alias vi3="nvim ~/.config/i3/config"
+alias vipoly="nvim ~/.config/polybar/config.ini"
+alias vialias="nvim ~/.aliases"
+alias vibashrc="nvim ~/.bashrc"
+alias vizshrc="nvim ~/.zshrc"
+alias videf="nvim ~/.definitions"
+alias videfinitions="nvim ~/.definitions"
+
+### ip ile alakalı kısayollar
+alias ipa="ip a show ens2 | sed '1,3d;5,999d' | cut -d 't' -f2 | cut -d '/' -f1 | tr -d ' '"
+alias ipav="ip a show tun0 | sed '1,2d;4,999d' | cut -d 't' -f2 | cut -d '/' -f1 | tr -d ' '"
+
+###### sübhan qedirli tarafından yapıldı - https://github.com/subhanqedirli/turkish-bash
+### türkçeleştirme 
+alias kök="sudo su"
+alias oluştur="touch"
+alias taşı="mv"
+alias kopyala="cp"
+alias sil="rm"
+alias liste="ls"
+alias çık="exit"
+alias kd="cd"
+alias eğer="if"
+alias yaz="echo"
+
+### sistem kısayolları
+alias sleep-pc="su -c 'echo mem > /sys/power/state'"
+alias sleep-pce="su -c 'echo mem > /sys/power/state'; exit"
+alias yast='xdg-su -c "/sbin/yast --gtk"'
+
+### shell yenileme
+alias .bashrc="source ~/.bashrc"
+alias .zshrc="source ~/.zshrc"
+alias .aliases="source ~/.aliases"
+alias .definitions="source ~/.definitions"
