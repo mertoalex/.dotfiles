@@ -1,9 +1,8 @@
-function cmus (){
+cmus (){
 	cd $HOME/Music
 	/usr/bin/cmus
 	cd $OLDPWD
-} #cmus önceden çalıştırılabilir dosya olduğu için çakışıyor snrm hata verdi, bende function yazdım başına ve çözüldü
-
+} # zshrc dosyamda cmus u alias olarak tanıtmışım diye hata yapıyormuş
 exit (){
 	pkill sshd
 	exit

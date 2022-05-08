@@ -216,8 +216,6 @@ alias ll='ls -l'
 alias la='ls -A'
 alias l='ls -CF'
 
-alias cmus="cd /home/mertoalex/Music; cmus; cd /home/mertoalex"
-
 cat > /dev/null << eof
 nvim() {
 	pkill picom ;
