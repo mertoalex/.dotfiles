@@ -17,5 +17,5 @@ isteyen alıp değiştirebilir ama yayınlayacaksa benimkilerinin üstüne yazd�
 ```
 
 ## bağış linki
-[burdan bağış yapabilirsini](https://kreosus.com/mertoalex)
+[burdan bağış yapabilirsiniz](https://kreosus.com/mertoalex)
 
