@@ -15,3 +15,7 @@ isteyen alıp değiştirebilir ama yayınlayacaksa benimkilerinin üstüne yazd�
 # bu kaldırıcı ile kaldırabilirsiniz
 ./uninstaller.sh
 ```
+
+## bağış linki
+[burdan bağış yapabilirsini](https://kreosus.com/mertoalex)
+
