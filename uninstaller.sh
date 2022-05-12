@@ -5,7 +5,7 @@ do	printf "devam etmek için 'e' tuşuna basıp enterlayın: "
 	[ $girdi == 'e' ] &> /dev/null && break
 done
 
-for file in $(ls|sed 's/uninstaller.sh//'|sed 's/installer.sh//'|sed 's/README.md//'|sed 's/LICENSE//')
+for file in {aliases,bashrc,definitions,zshrc} 
 do	[ -h ~/.$file			] && rm -v ~/.$file
 	[ -f ~/backup.dotfiles/.$file	] && mv -v ~/backup.dotfiles/.$file ~/
 done

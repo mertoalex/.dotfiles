@@ -9,7 +9,7 @@ do	printf "devam etmek için 'e' tuşuna basıp enterlayın: "
 done
 
 mkdir -pv ~/backup.dotfiles
-for file in $(ls|sed 's/uninstaller.sh//'|sed 's/installer.sh//'|sed 's/README.md//'|sed 's/LICENSE//')
+for file in {aliases,bashrc,definitions,zshrc}
 do	[ -f ~/.$file ] && mv -v ~/.$file ~/backup.dotfiles/
 	ln -sv $PWD/$file ~/.$file
 done

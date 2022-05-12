@@ -4,6 +4,7 @@ alias cls="clear"
 alias vim="nvim"
 alias codi="codium"
 alias code="codium"
+alias mkdir="mkdir -p"
 
 ### ayar kısayolları
 alias vipico='nvim ~/.config/picom.conf'

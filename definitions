@@ -30,3 +30,12 @@ colormode (){
 	[ $mode == 0 ] && export color_prompt=x
 	source ~/.${SHELL}rc ; fi
 }
+
+hug (){ #canım sıkılınca kendime sarılmak için xd
+	emoji_sayısı=$(($RANDOM % 2))
+	if	[ $emoji_sayısı == 1 ]
+	then	emoji=':3'
+	elif	[ $emoji_sayısı == 0 ]
+	then	emoji='<3' ;fi
+	echo "!hug $(whoami), aww cutie $emoji" | lolcat
+}
