@@ -1,9 +1,9 @@
 #!/usr/bin/env sh
 cmus (){
-	cd $HOME/Music
+	pushd $HOME/Music
 	# st cava & /usr/bin/cmus && pkill cava # for cava
 	${PREFIX}/bin/cmus
-	cd $OLDPWD
+	popd
 }
 
 _exit (){
