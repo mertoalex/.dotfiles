@@ -1,7 +1,7 @@
 ### .dotfiles
-Benim kişisel .dotfile dosyalarım
-Isteyen alıp değiştirebilir, yayınlayacaksa benim dosyalarımın üzerine yazıldığını belirtirse mutlu olurum.
-Not: **Bazı** yorumları ingilizce yazdım türkçeye üşendim .d
+Benim kişisel .dotfile dosyalarım<br/>
+Isteyen alıp değiştirebilir, yayınlayacaksa benim dosyalarımın üzerine yazıldığını belirtirse mutlu olurum.<br/>
+Not: **Bazı** yorumları ingilizce yazdım türkçeye üşendim .d<br/>
 
 ## yüklemek için
 ```bash
