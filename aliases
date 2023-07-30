@@ -39,7 +39,7 @@ alias yaz="echo"
 # sistem kısayolları
 alias sleep-pc="su -c 'echo mem > /sys/power/state'"
 alias sleep-pce="su -c 'echo mem > /sys/power/state'; exit"
-alias yast='xdg-su -c "/sbin/yast --gtk"' #opensuse dan kalma
+#alias yast='xdg-su -c "/sbin/yast --gtk"' #opensuse dan kalma
 
 # shell yenileme
 alias .bashrc="source ~/.bashrc"
