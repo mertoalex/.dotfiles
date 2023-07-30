@@ -23,7 +23,7 @@ alias videfinitions="nvim ~/.definitions"
 alias ipa="ip a s eth0 | grep 'inet ' | sed 's+/2.*$++;s/.*t //'"
 alias ipav="ip a s tun0 | grep 'inet ' | sed 's+/2.*$++;s/.*t //'"
 
-## sübhan qedirli tarafından yapıldı - httpsalias//github.com/subhanqedirli/turkish-bash
+## sübhan qedirli tarafından yapıldı - https://github.com/subhanqedirli/turkish-bash
 # türkçeleştirme 
 alias kök="sudo su"
 alias oluştur="touch"
