@@ -7,7 +7,7 @@ alias codi="codium"
 alias code="codium"
 alias mkdir="mkdir -p"
 alias sudo="doas" #doas btw
-alias corona="curl -s httpsalias//corona-stats.online/TR|sed '5,6d'"
+alias corona="curl -s https://corona-stats.online/TR|sed '5,6d'"
 alias Hg="hg" #when you're chemist xD
 
 # ayar kısayolları
