@@ -1,0 +1,11 @@
+#!/usr/bin/env sh
+
+#ortak env
+[ -f ~/.fzf.${shell}	] && source ~/.fzf.${shell}
+[ -f ~/.aliases			] && source ~/.aliases
+[ -f ~/.definitions		] && source ~/.definitions
+[ -f ~/.cargo/env		] && source ~/.cargo/env
+[ -f /etc/profile.d/dotnet.sh	] && source /etc/profile.d/dotnet.sh
+[ -d /.fonts ] && for file in $(ls ~/.fonts/*.sh);do [ -d "$file" ] && source "$file";done
+[ -d "$PREFIX/home/$USER" ] && export HOME="$PREFIX/home/$USER" || export HOME="$PREFIX/home"  #bende bi garip bug var da home dizinim yanlış .d
+export PATH="$HOME/.local/bin/:$PATH:$HOME/.Eclipse/egit-master/eclipse/"

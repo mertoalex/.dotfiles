@@ -1,14 +1,17 @@
-### kısaltmalar
-alias cat="pridecat" #ohno- yanlış anlamayın
+#!/usr/bin/env sh
+# kısaltmalar
+alias cat="pridecat" # when straight ally and you like colors
 alias cls="clear"
 alias vim="nvim"
 alias codi="codium"
 alias code="codium"
 alias mkdir="mkdir -p"
+alias sudo="doas" #doas btw
+alias corona="curl -s httpsalias//corona-stats.online/TR|sed '5,6d'"
+alias Hg="hg" #when you're chemist xD
 
-### ayar kısayolları
+# ayar kısayolları
 alias vipico='nvim ~/.config/picom.conf'
-alias vi3="nvim ~/.config/i3/config"
 alias vipoly="nvim ~/.config/polybar/config.ini"
 alias vialias="nvim ~/.aliases"
 alias vibashrc="nvim ~/.bashrc"
@@ -16,12 +19,12 @@ alias vizshrc="nvim ~/.zshrc"
 alias videf="nvim ~/.definitions"
 alias videfinitions="nvim ~/.definitions"
 
-### ip ile alakalı kısayollar
-alias ipa="ip a show ens2 | sed '1,3d;5,999d' | cut -d 't' -f2 | cut -d '/' -f1 | tr -d ' '"
-alias ipav="ip a show tun0 | sed '1,2d;4,999d' | cut -d 't' -f2 | cut -d '/' -f1 | tr -d ' '"
+# ip ile alakalı kısayollar
+alias ipa="ip a s eth0 | grep 'inet ' | sed 's+/2.*$++;s/.*t //'"
+alias ipav="ip a s tun0 | grep 'inet ' | sed 's+/2.*$++;s/.*t //'"
 
-###### sübhan qedirli tarafından yapıldı - https://github.com/subhanqedirli/turkish-bash
-### türkçeleştirme 
+## sübhan qedirli tarafından yapıldı - httpsalias//github.com/subhanqedirli/turkish-bash
+# türkçeleştirme 
 alias kök="sudo su"
 alias oluştur="touch"
 alias taşı="mv"
@@ -33,12 +36,12 @@ alias kd="cd"
 alias eğer="if"
 alias yaz="echo"
 
-### sistem kısayolları
+# sistem kısayolları
 alias sleep-pc="su -c 'echo mem > /sys/power/state'"
 alias sleep-pce="su -c 'echo mem > /sys/power/state'; exit"
-alias yast='xdg-su -c "/sbin/yast --gtk"'
+alias yast='xdg-su -c "/sbin/yast --gtk"' #opensuse dan kalma
 
-### shell yenileme
+# shell yenileme
 alias .bashrc="source ~/.bashrc"
 alias .zshrc="source ~/.zshrc"
 alias .aliases="source ~/.aliases"

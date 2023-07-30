@@ -1,3 +1,4 @@
+#!/usr/bin/env zsh
 # ~/.zshrc file for zsh interactive shells.
 # see /usr/share/doc/zsh/examples/zshrc for examples
 
@@ -7,10 +8,10 @@
 export SHELL="zsh"
 
 setopt autocd              # change directory just by typing its name
-#setopt correct            # auto correct mistakes
+setopt correct             # auto correct mistakes
 setopt interactivecomments # allow comments in interactive mode
-setopt magicequalsubst     # enable filename expansion for arguments of the form ‘anything=expression’
-setopt nonomatch           # hide error message if there is no match for the pattern
+#setopt magicequalsubst     # enable filename expansion for arguments of the form ‘anything=expression’
+#setopt nonomatch           # hide error message if there is no match for the pattern
 setopt notify              # report the status of background jobs immediately
 setopt numericglobsort     # sort filenames numerically when it makes sense
 setopt promptsubst         # enable command substitution in prompt
@@ -27,8 +28,8 @@ bindkey '^[[3;5~' kill-word                       # ctrl + Supr
 bindkey '^[[3~' delete-char                       # delete
 bindkey '^[[1;5C' forward-word                    # ctrl + ->
 bindkey '^[[1;5D' backward-word                   # ctrl + <-
-bindkey '^[[5~' beginning-of-buffer-or-history    # page up
-bindkey '^[[6~' end-of-buffer-or-history          # page down
+#bindkey '^[[5~' beginning-of-buffer-or-history    # page up
+#bindkey '^[[6~' end-of-buffer-or-history          # page down
 bindkey '^[[H' beginning-of-line                  # home
 bindkey '^[[F' end-of-line                        # end
 bindkey '^[[Z' undo                               # shift + tab undo last action
@@ -41,7 +42,7 @@ zstyle ':completion:*' matcher-list 'm:{a-zA-Z}={A-Za-z}' # case insensitive tab
 
 # History configurations
 HISTFILE=~/.zsh_history
-HISTSIZE=1000
+#HISTSIZE=1000
 SAVEHIST=2000
 setopt hist_expire_dups_first # delete duplicates first when HISTFILE size exceeds HISTSIZE
 setopt hist_ignore_dups       # ignore duplicated commands history list
@@ -57,19 +58,32 @@ alias history="history 0"
 
 # set variable identifying the chroot you work in (used in the prompt below)
 if [ -z "${debian_chroot:-}" ] && [ -r /etc/debian_chroot ]; then
-	debian_chroot=$(cat /etc/debian_chroot)
+	debian_chroot=$(cat /etc/debian_chroot || echo '')
 fi
 
-if [ -z "$color_prompt" ]; then
+#you can make this if you want to make config file:
+
+#uncomment this and
+# . ~/.color_mode # <<< export no_color="no"
+
+#change these lines
+# ~/.definitions:
+# 33: [ "$mode" "==" "1" ] && echo 'no_color=""'	> ~/.color_mode
+# 34: [ "$mode" "==" "0" ] && echo 'no_color="yes"'	> ~/.color_mode
+
+[ -f ~/.color_mode ] || echo "unset color_prompt force_no_color_prompt" > ~/.color_mode
+. ~/.color_mode # use colormode to change color!
+
+if [ -z "$color_prompt" ] && [ "x$force_no_color_prompt" "!=" "xyes" ]; then
 	# set a fancy prompt (non-color, unless we know we "want" color)
 	case "$TERM" in
-		xterm-color|*-256color) export color_prompt=yes;;
+		xterm-kitty|xterm-color|*-256color) export color_prompt=yes;;
 	esac
 
 	# uncomment for a colored prompt, if the terminal has the capability; turned
 	# off by default to not distract the user: the focus in a terminal window
 	# should be on the output of commands, not on the prompt
-	force_color_prompt=yes
+	#force_color_prompt=yes
 
 	if [ -n "$force_color_prompt" ]; then
 		if [ -x /usr/bin/tput ] && tput setaf 1 >&/dev/null; then
@@ -78,86 +92,43 @@ if [ -z "$color_prompt" ]; then
 			# a case would tend to support setf rather than setaf.)
 			export color_prompt=yes
 		else
-			export color_prompt=
+			unset color_prompt
 		fi
 	fi
 fi
 
-function git_branch_name() {
-	branch=$(git symbolic-ref HEAD 2> /dev/null | awk 'BEGIN{FS="/"} {print $NF}')
-	if [[ $branch == "" ]]; then
-		:
-	else # {
-	if [ "$color_prompt" = yes ]; then
-		echo "─(%B%F{yellow}$(git config --local remote.origin.url|sed -n 's#.*/\([^.]*\)\.git#\1#p')$1/%B%F{red}$branch$1)"
-	else
-		echo "─($(git config --local remote.origin.url|sed -n 's#.*/\([^.]*\)\.git#\1#p')/$branch)"
-	fi
-	#}
-
-	fi
+function git_name() {
+	onefetch &> /dev/null || return
+	export name=`onefetch --no-art --no-color-palette --no-bold --no-title -c 7 -d description head pending created languages dependencies authors last-change contributors url commits churn lines-of-code size license | sed "s,\x1B\[[?0-9;]*[a-zA-Z],,g" | sed 's/.*: //g;s/ (.* branch)/ - /g' | sed -z 's/\n//g'` &> /dev/null
+	[ -z "$name" ] || [ "$1" "==" "yes" ] && echo "-(%B%F{yellow}${name}$2)" || echo "-(${name})"
 }
 
-if [ "$color_prompt" = yes ]; then
+#source ~/.git-prompt.sh # https://github.com/git/git/blob/master/contrib/completion/git-prompt.sh
+#somehow I broked git thing in devuan :/
+#update: I Fixed it, Yea Dude!
+
+
+if [ "x$color_prompt" "==" "xyes" ]; then
 	if [[ -n $SSH_CLIENT ]]; then
-		PROMPT=$'%F{%(#.blue.green)}┌──${debian_chroot:+($debian_chroot)──}(%B%F{%(#.red.blue)}%n%(#.💀.㉿)%m%b%F{%(#.blue.green)})-[%B%F{reset}%(6~.%-1~/…/%4~.%5~)%b%F{%(#.blue.green)}] %b%F{red}(ssh)$(git_branch_name "%b%F{%(#.blue.green)}")%b%F{%(#.blue.green)}\n└─%B%(#.%F{red}#.%F{blue}$)%b%F{reset} '
+		PROMPT=$'%F{%(#.blue.green)}┌────(%B%F{%(#.red.blue)}%n %(#.💀.) %m%b%F{%(#.blue.green)})-[%B%F{reset}%(6~.%-1~/…/%4~.%5~)%b%F{%(#.blue.green)}]$(git_name yes "%b%F{%(#.blue.green)}") %b%F{red}(ssh)%b%F{%(#.blue.green)}\n└─%B%(#.%F{red}#.%F{blue}$)%b%F{reset} '
 		RPROMPT=$'%(?.. %? %F{red}%B⨯%b%F{reset})%(1j. %j %F{yellow}%B⚙%b%F{reset}.)'
 	else
-		PROMPT=$'%F{%(#.blue.green)}┌──${debian_chroot:+($debian_chroot)──}(%B%F{%(#.red.blue)}%n%(#.💀.㉿)%m%b%F{%(#.blue.green)})-[%B%F{reset}%(6~.%-1~/…/%4~.%5~)%b%F{%(#.blue.green)}]$(git_branch_name "%b%F{%(#.blue.green)}")\n└─%B%(#.%F{red}#.%F{blue}$)%b%F{reset} '
+		PROMPT=$'%F{%(#.blue.green)}┌────(%B%F{%(#.red.blue)}%n %(#.💀.) %m%b%F{%(#.blue.green)})-[%B%F{reset}%(6~.%-1~/…/%4~.%5~)%b%F{%(#.blue.green)}]$(git_name yes "%b%F{%(#.blue.green)}")\n└─%B%(#.%F{red}#.%F{blue}$)%b%F{reset} '
 		RPROMPT=$'%(?.. %? %F{red}%B⨯%b%F{reset})%(1j. %j %F{yellow}%B⚙%b%F{reset}.)'
 	fi
 
 	# enable syntax-highlighting
-	if [ -f /usr/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh ] && [ "$color_prompt" = yes ]; then
+	if [ -f /usr/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh ]; then
 		. /usr/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
-		ZSH_HIGHLIGHT_HIGHLIGHTERS=(main brackets pattern)
-		ZSH_HIGHLIGHT_STYLES[default]=none
-		ZSH_HIGHLIGHT_STYLES[unknown-token]=fg=red,bold
-		ZSH_HIGHLIGHT_STYLES[reserved-word]=fg=cyan,bold
-		ZSH_HIGHLIGHT_STYLES[suffix-alias]=fg=green,underline
-		ZSH_HIGHLIGHT_STYLES[global-alias]=fg=magenta
-		ZSH_HIGHLIGHT_STYLES[precommand]=fg=green,underline
-		ZSH_HIGHLIGHT_STYLES[commandseparator]=fg=blue,bold
-		ZSH_HIGHLIGHT_STYLES[autodirectory]=fg=green,underline
-		ZSH_HIGHLIGHT_STYLES[path]=underline
-		ZSH_HIGHLIGHT_STYLES[path_pathseparator]=
-		ZSH_HIGHLIGHT_STYLES[path_prefix_pathseparator]=
-		ZSH_HIGHLIGHT_STYLES[globbing]=fg=blue,bold
-		ZSH_HIGHLIGHT_STYLES[history-expansion]=fg=blue,bold
-		ZSH_HIGHLIGHT_STYLES[command-substitution]=none
-		ZSH_HIGHLIGHT_STYLES[command-substitution-delimiter]=fg=magenta
-		ZSH_HIGHLIGHT_STYLES[process-substitution]=none
-		ZSH_HIGHLIGHT_STYLES[process-substitution-delimiter]=fg=magenta
-		ZSH_HIGHLIGHT_STYLES[single-hyphen-option]=fg=magenta
-		ZSH_HIGHLIGHT_STYLES[double-hyphen-option]=fg=magenta
-		ZSH_HIGHLIGHT_STYLES[back-quoted-argument]=none
-		ZSH_HIGHLIGHT_STYLES[back-quoted-argument-delimiter]=fg=blue,bold
-		ZSH_HIGHLIGHT_STYLES[single-quoted-argument]=fg=yellow
-		ZSH_HIGHLIGHT_STYLES[double-quoted-argument]=fg=yellow
-		ZSH_HIGHLIGHT_STYLES[dollar-quoted-argument]=fg=yellow
-		ZSH_HIGHLIGHT_STYLES[rc-quote]=fg=magenta
-		ZSH_HIGHLIGHT_STYLES[dollar-double-quoted-argument]=fg=magenta
-		ZSH_HIGHLIGHT_STYLES[back-double-quoted-argument]=fg=magenta
-		ZSH_HIGHLIGHT_STYLES[back-dollar-quoted-argument]=fg=magenta
-		ZSH_HIGHLIGHT_STYLES[assign]=none
-		ZSH_HIGHLIGHT_STYLES[redirection]=fg=blue,bold
-		ZSH_HIGHLIGHT_STYLES[comment]=fg=black,bold
-		ZSH_HIGHLIGHT_STYLES[named-fd]=none
-		ZSH_HIGHLIGHT_STYLES[numeric-fd]=none
-		ZSH_HIGHLIGHT_STYLES[arg0]=fg=green
-		ZSH_HIGHLIGHT_STYLES[bracket-error]=fg=red,bold
-		ZSH_HIGHLIGHT_STYLES[bracket-level-1]=fg=blue,bold
-		ZSH_HIGHLIGHT_STYLES[bracket-level-2]=fg=green,bold
-		ZSH_HIGHLIGHT_STYLES[bracket-level-3]=fg=magenta,bold
-		ZSH_HIGHLIGHT_STYLES[bracket-level-4]=fg=yellow,bold
-		ZSH_HIGHLIGHT_STYLES[bracket-level-5]=fg=cyan,bold
-		ZSH_HIGHLIGHT_STYLES[cursor-matchingbracket]=standout
-	fi
+		ZSH_HIGHLIGHT_HIGHLIGHTERS=(main brackets pattern); ZSH_HIGHLIGHT_STYLES[default]=none; ZSH_HIGHLIGHT_STYLES[unknown-token]=fg=red,bold; ZSH_HIGHLIGHT_STYLES[reserved-word]=fg=cyan,bold; ZSH_HIGHLIGHT_STYLES[suffix-alias]=fg=green,underline; ZSH_HIGHLIGHT_STYLES[global-alias]=fg=magenta; ZSH_HIGHLIGHT_STYLES[precommand]=fg=green,underline; ZSH_HIGHLIGHT_STYLES[commandseparator]=fg=blue,bold; ZSH_HIGHLIGHT_STYLES[autodirectory]=fg=green,underline; ZSH_HIGHLIGHT_STYLES[path]=underline; ZSH_HIGHLIGHT_STYLES[path_pathseparator]=; ZSH_HIGHLIGHT_STYLES[path_prefix_pathseparator]=; ZSH_HIGHLIGHT_STYLES[globbing]=fg=blue,bold; ZSH_HIGHLIGHT_STYLES[history-expansion]=fg=blue,bold; ZSH_HIGHLIGHT_STYLES[command-substitution]=none; ZSH_HIGHLIGHT_STYLES[command-substitution-delimiter]=fg=magenta; ZSH_HIGHLIGHT_STYLES[process-substitution]=none; ZSH_HIGHLIGHT_STYLES[process-substitution-delimiter]=fg=magenta; ZSH_HIGHLIGHT_STYLES[single-hyphen-option]=fg=magenta; ZSH_HIGHLIGHT_STYLES[double-hyphen-option]=fg=magenta; ZSH_HIGHLIGHT_STYLES[back-quoted-argument]=none; ZSH_HIGHLIGHT_STYLES[back-quoted-argument-delimiter]=fg=blue,bold; ZSH_HIGHLIGHT_STYLES[single-quoted-argument]=fg=yellow; ZSH_HIGHLIGHT_STYLES[double-quoted-argument]=fg=yellow; ZSH_HIGHLIGHT_STYLES[dollar-quoted-argument]=fg=yellow; ZSH_HIGHLIGHT_STYLES[rc-quote]=fg=magenta; ZSH_HIGHLIGHT_STYLES[dollar-double-quoted-argument]=fg=magenta; ZSH_HIGHLIGHT_STYLES[back-double-quoted-argument]=fg=magenta; ZSH_HIGHLIGHT_STYLES[back-dollar-quoted-argument]=fg=magenta; ZSH_HIGHLIGHT_STYLES[assign]=none; ZSH_HIGHLIGHT_STYLES[redirection]=fg=blue,bold; ZSH_HIGHLIGHT_STYLES[comment]=fg=black,bold; ZSH_HIGHLIGHT_STYLES[named-fd]=none; ZSH_HIGHLIGHT_STYLES[numeric-fd]=none; ZSH_HIGHLIGHT_STYLES[arg0]=fg=green; ZSH_HIGHLIGHT_STYLES[bracket-error]=fg=red,bold; ZSH_HIGHLIGHT_STYLES[bracket-level-1]=fg=blue,bold; ZSH_HIGHLIGHT_STYLES[bracket-level-2]=fg=green,bold; ZSH_HIGHLIGHT_STYLES[bracket-level-3]=fg=magenta,bold; ZSH_HIGHLIGHT_STYLES[bracket-level-4]=fg=yellow,bold; ZSH_HIGHLIGHT_STYLES[bracket-level-5]=fg=cyan,bold; ZSH_HIGHLIGHT_STYLES[cursor-matchingbracket]=standout
+	fi	# a little less lines eaten by this now!
 else
 	if [[ -n $SSH_CLIENT ]]; then
-		PROMPT=$'┌──(%n㉿%m)-[%(6~.%-1~/…/%4~.%5~)] (ssh)$(git_branch_name)\n└─$ '
+		PROMPT=$'┌────(%n  %m)-[%(6~.%-1~/…/%4~.%5~)]$(git_name) (ssh)\n└─$ '
+		RPROMPT=$'%(%? ⨯)%(%j ⚙)'
 	else
-		PROMPT=$'┌──(%n㉿%m)-[%(6~.%-1~/…/%4~.%5~)]$(git_branch_name)\n└─$ '
+		PROMPT=$'┌────(%n  %m)-[%(6~.%-1~/…/%4~.%5~)]$(git_name)\n└─$ '
+		RPROMPT=$'%(%? ⨯)%(%j ⚙)'
 	fi
 fi
 unset color_prompt force_color_prompt
@@ -216,14 +187,6 @@ alias ll='ls -l'
 alias la='ls -A'
 alias l='ls -CF'
 
-cat > /dev/null << eof
-nvim() {
-	pkill picom ;
-	/bin/nvim $* ;
-	picom & ;
-}
-eof
-
 # enable auto-suggestions based on the history
 if [ -f /usr/share/zsh-autosuggestions/zsh-autosuggestions.zsh ]; then
 	. /usr/share/zsh-autosuggestions/zsh-autosuggestions.zsh
@@ -234,3 +197,18 @@ fi
 [ -f ~/.fzf.zsh		] && source ~/.fzf.zsh
 [ -f ~/.aliases		] && source ~/.aliases
 [ -f ~/.definitions	] && source ~/.definitions
+[ -f ~/.cargo/env	] && source ~/.cargo/env
+[ -f ~/.env			] && source ~/.env
+[ -f /etc/profile.d/dotnet.sh	] && source /etc/profile.d/dotnet.sh
+[ -d /.fonts ] && for file in $(ls ~/.fonts/*.sh);do [ -d "$file" ] && source "$file";done
+
+[ -f "~/Pictures/I can't live with modern tech anymore.png" ] && [ "x$TERM" == "xxterm-kitty" ] && uwufetch -i "~/Pictures/I\ can\'t\ live\ with\ modern\ tech\ anymore.png"
+
+#start xorg on startup, by JohnHammond on github. (so much edited)
+if [ $XDG_VTNR -eq 1 ]; then
+	if [ $(tty | grep tty) ]; then
+		export MOZ_ENABLE_WAYLAND=1
+		rm -rvf .river-logs/*
+		river
+	fi
+fi

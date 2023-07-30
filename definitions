@@ -1,41 +1,83 @@
+#!/usr/bin/env sh
 cmus (){
 	cd $HOME/Music
-	/usr/bin/cmus
+	# st cava & /usr/bin/cmus && pkill cava # for cava
+	${PREFIX}/bin/cmus
 	cd $OLDPWD
-} # zshrc dosyamda cmus u alias olarak tanıtmışım diye hata yapıyormuş
-exit (){
-	pkill sshd
-	exit
 }
 
+_exit (){
+	[ "x$(whereis openrc)" "==" "openrc:" ] && (sudo systemctl stop sshd; : for systemd) || \
+	rc-service ssh status | grep " status: stopped\|is not running" &> /dev/null || sudo rc-service ssh stop; : for openrc
+}
+trap _exit EXIT
+
 sshd (){
-	sudo sshd
-	echo ssh $(whoami)@$(ipa)
+	[ "x$(whereis openrc)" "==" "openrc:" ] && (sudo systemctl start sshd; : for systemd) || \
+	sudo rc-service ssh start; : for openrc
+	echo "┌[ enter command to connect this computer with same modem ]\n└$ ssh $(whoami)@$(ipa)"
 }
 
 sshmode (){
 	mode=$1
-	if [ -z "$mode" ] || grep -q "\-h" <<< "$mode" ; then echo "sshmode - debug ssh opened or closed for .*shrc theme \n\tusage: $0 [1:0]\n\t\t1: emulate ssh\n\t\t0: stop emulate ssh (warning: stops ssh theme in ssh!)" && false ; else
-	[ $mode != 1 ] && [ $mode != 0 ] && echo "$mode is not valid! (1: on, 0: off)" && false
-	[ $mode == 1 ] && export SSH_CLIENT='yes' 
-	[ $mode == 0 ] && export SSH_CLIENT= 
-	source ~/.${SHELL}rc ; fi
+	([ -z "$mode" ] || grep -q "\-h" <<< "$mode") && echo "sshmode - debug ssh opened or closed for .*shrc theme \n\tusage: $0 [1:0:-h]\n\t\t1: emulate ssh.\n\t\t0: stop emulate ssh. (warning: stops ssh theme in ssh!)\n\t\t-h: shows this text." && return
+	[ "$mode" "!=" '1' ] && [ "$mode" "!=" '0' ] && echo "$mode is not valid! (1: on, 0: off, -h: help text)" && return 1
+	[ "$mode" "==" '1' ] && export SSH_CLIENT='yes' 
+	[ "$mode" "==" '0' ] && unset SSH_CLIENT 
+	source ~/.${SHELL}rc 
 }
 
 colormode (){
 	mode=$1
-	if [ -z "$mode" ] || grep -q "\-h" <<< "$mode" ; then echo "colormode - changes color mode for .*shrc theme \n\tusage: $0 [1:0]\n\t\t1: color on \n\t\t0: color off" && false ; else
-	[ $mode != 1 ] && [ $mode != 0 ] && echo "$mode is not valid! (1: on, 0: off)\nchanging color on for error." && false
-	[ $mode == 1 ] && export color_prompt=yes 
-	[ $mode == 0 ] && export color_prompt=x
-	source ~/.${SHELL}rc ; fi
+	([ -z "$mode" ] || grep -q "\-h" <<< "$mode") && echo "colormode - changes color mode for .*shrc theme \n\tusage: $0 [1:0:-h]\n\t\t1: color on \n\t\t0: color off\n\t\t-h: shows this text." && return
+	[ "$mode" "!=" "1" ] && [ "$mode" "!=" "0" ] && echo "$mode is not valid! (1: on, 0: off)" && return 1
+	[ "$mode" "==" "1" ] && echo -e 'export color_prompt="yes"\nunset force_no_color_prompt'		> ~/.color_mode
+	[ "$mode" "==" "0" ] && echo -e 'unset color_prompt\nexport force_no_color_prompt="yes"'	> ~/.color_mode
+	source ~/.${SHELL}rc
 }
+
+: 'testing() {
+	[ "$1" "==" "1" ] && sshmode 0 && colormode 0
+	[ "$1" "==" "2" ] && sshmode 0 && colormode 1
+	[ "$1" "==" "3" ] && sshmode 1 && colormode 0
+	[ "$1" "==" "4" ] && sshmode 1 && colormode 1
+}'
 
 hug (){ #canım sıkılınca kendime sarılmak için xd
 	emoji_sayısı=$(($RANDOM % 2))
-	if	[ $emoji_sayısı == 1 ]
-	then	emoji=':3'
-	elif	[ $emoji_sayısı == 0 ]
-	then	emoji='<3' ;fi
-	echo "!hug $(whoami), aww cutie $emoji" | lolcat
+	[ $emoji_sayısı "==" 1 ] && emoji=':3'
+	[ $emoji_sayısı "==" 0 ] && emoji='<3'
+	[ "x$1" != "x" ] && hugged="$1" ||	hugged="$USERNAME" 
+	echo "!hug $hugged, aww cutie $emoji" | lolcat
+}
+
+function touch {
+	for file in $*
+	do	${PREFIX}/bin/touch $file && \
+		echo "'$file' created"
+	done
+}
+
+: 'function winget() {
+  [ "x$1" "==" "xinstall" ] && eval "emerge --update --deep --newuse @world ${*:2}" 
+}' # wth is that 90WH94G8QWG3R4
+
+: 'function bismillahirahmanirrahim() {
+	doas $* | sed 's/doas/bismillahirahmanirrahim/'
+}' # W9H5ARW043R
+
+: 'function j() {
+	ls "$(autojump $*)" &> /dev/null
+	stderr=$?
+	[ "x$stderr" != "x0" ] && autojump $*
+	[ "x$stderr" "==" "x0" ] && cd "$(autojump $*)" || :
+}' #idk what is that too
+
+function git-suckless() { #git-clone command for suckless repo I think
+	for software in $*
+	do	echo git clone https://git.suckless.org/$software
+		git clone https://git.suckless.org/$software
+		echo
+		echo
+	done
 }
